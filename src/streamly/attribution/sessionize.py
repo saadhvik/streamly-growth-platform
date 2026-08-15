@@ -142,7 +142,9 @@ def journeys_from_frame(df: pd.DataFrame, cfg: AttributionConfig = ATTRIBUTION) 
     df = df.sort_values(["user_id", "ts", "touch_id"], kind="mergesort")
 
     # Apply the lookback window (converters only -- see docstring).
-    age_days = (df["convert_ts"] - df["ts"]) / pd.Timedelta(days=1)
+    # `.dt.total_seconds()` rather than dividing by a Timedelta: the division
+    # is untyped in pandas-stubs, and this spelling is equivalent.
+    age_days = (df["convert_ts"] - df["ts"]).dt.total_seconds() / 86_400.0
     in_window = age_days.isna() | (age_days <= cfg.lookback_days)
     # A touch logged *after* the conversion cannot have caused it.
     in_window &= age_days.isna() | (age_days >= 0)

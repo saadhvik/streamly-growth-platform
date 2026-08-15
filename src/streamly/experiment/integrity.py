@@ -112,7 +112,7 @@ def srm_check(
         raise ValueError("no units assigned; cannot check the ratio")
 
     if expected_split is None:
-        weights = np.full(len(variants), 1.0 / len(variants))
+        weights: np.ndarray = np.full(len(variants), 1.0 / len(variants))
     else:
         missing = set(variants) - set(expected_split)
         if missing:

@@ -222,13 +222,16 @@ def reallocation_chart(plan_table: pd.DataFrame, p: Palette = LIGHT) -> ChartLik
     )
     # Labels sit just beyond the bar end, on the side the bar points, so they
     # never overprint the mark they annotate.
-    label_mark = dict(fontSize=12, color=p.text_secondary, font=FONT, baseline="middle")
+    # Passed inline rather than unpacked from a dict: a dict literal infers as
+    # dict[str, object], which cannot satisfy altair's precise keyword types.
     labels = (
         base.transform_filter(alt.datum.delta_k >= 0)
-        .mark_text(align="left", dx=6, **label_mark)
+        .mark_text(align="left", dx=6, fontSize=12, color=p.text_secondary,
+                   font=FONT, baseline="middle")
         .encode(text=alt.Text("delta_k:Q", format="+.1f"))
         + base.transform_filter(alt.datum.delta_k < 0)
-        .mark_text(align="right", dx=-6, **label_mark)
+        .mark_text(align="right", dx=-6, fontSize=12, color=p.text_secondary,
+                   font=FONT, baseline="middle")
         .encode(text=alt.Text("delta_k:Q", format="+.1f"))
     )
     zero = alt.Chart(pd.DataFrame({"x": [0.0]})).mark_rule(

@@ -78,7 +78,8 @@ def recovery_scores(
             "max_abs_error": float(np.abs(err).max()),
         })
     out = pd.DataFrame(rows).set_index("model")
-    base_mae = float(out.loc[baseline, "mae"])
+    # .loc returns a broad scalar union under pandas-stubs; narrow it once.
+    base_mae = float(out["mae"].loc[baseline])
     out["error_reduction_vs_baseline"] = 1.0 - out["mae"] / base_mae
     return out.sort_values("mae")
 
@@ -109,11 +110,15 @@ def _main() -> None:
     disp[["mae", "rmse", "max_abs_error"]] *= 100
     print(disp.round(2).to_string())
 
-    best = scores.index[0]
-    print(f"\nBest recovery: {best} "
-          f"(MAE {scores.loc[best, 'mae'] * 100:.2f}pp vs "
-          f"last-touch {scores.loc[BASELINE_MODEL, 'mae'] * 100:.2f}pp, "
-          f"{scores.loc[best, 'error_reduction_vs_baseline']:.0%} lower)")
+    # Values are pulled out and narrowed to float first: indexing a DataFrame
+    # with .loc[row, col] is typed as a broad scalar union under pandas-stubs,
+    # so arithmetic and format specifiers on it cannot be checked.
+    best = str(scores.index[0])
+    best_mae = float(scores["mae"].loc[best]) * 100
+    baseline_mae = float(scores["mae"].loc[BASELINE_MODEL]) * 100
+    reduction = float(scores["error_reduction_vs_baseline"].loc[best])
+    print(f"\nBest recovery: {best} (MAE {best_mae:.2f}pp vs "
+          f"last-touch {baseline_mae:.2f}pp, {reduction:.0%} lower)")
 
 
 if __name__ == "__main__":
