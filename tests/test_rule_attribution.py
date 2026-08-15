@@ -184,7 +184,7 @@ def test_each_rule_is_biased_toward_the_funnel_position_it_favours(
 
     from streamly.config import GROUND_TRUTH_DIR
 
-    truth = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json"))["channel_importance_true"]
+    truth = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json", encoding="utf-8"))["channel_importance_true"]
     table = rules.credit_table(warehouse_journeys, _CFG)
 
     # Position-driven over-crediting, in opposite directions.

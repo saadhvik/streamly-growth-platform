@@ -145,7 +145,7 @@ def _write_ground_truth(cfg: DataGenConfig, ecfg: ExperimentConfig) -> None:
         },
         "seed": cfg.seed,
     }
-    with open(GROUND_TRUTH_DIR / "ground_truth.json", "w") as f:
+    with open(GROUND_TRUTH_DIR / "ground_truth.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
 

@@ -530,7 +530,7 @@ def generate(
 
         from streamly.config import GROUND_TRUTH_DIR
 
-        with open(GROUND_TRUTH_DIR / "ground_truth.json") as f:
+        with open(GROUND_TRUTH_DIR / "ground_truth.json", encoding="utf-8") as f:
             true_lift = json.load(f)["experiment"]["true_treatment_lift_abs"]
     except (OSError, KeyError):
         pass  # ground truth is optional; real experiments have none

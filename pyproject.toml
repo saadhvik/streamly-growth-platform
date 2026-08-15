@@ -5,7 +5,9 @@ description = "Marketing attribution + trustworthy experimentation platform for 
 requires-python = ">=3.10"
 dependencies = [
     "duckdb>=1.0",
-    "numpy>=1.24",
+    # >=2.0: sequential.py uses np.trapezoid, which replaced np.trapz in 2.0.
+    # The two spellings do not coexist, so this floor is load-bearing.
+    "numpy>=2.0",
     "pandas>=2.0",
     "scipy>=1.10",
     "statsmodels>=0.14",
@@ -23,6 +25,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    # tomllib is stdlib from 3.11; the test matrix floor is 3.10.
+    'tomli; python_version < "3.11"',
     "ruff>=0.5",
     "mypy>=1.8",
     "pandas-stubs",

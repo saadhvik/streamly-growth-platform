@@ -30,7 +30,7 @@ BASELINE_MODEL = "last_touch"   # the incumbent every method is scored against
 def load_ground_truth(path: Path | None = None) -> dict[str, float]:
     """Read the locked true channel-importance vector."""
     p = path or (GROUND_TRUTH_DIR / "ground_truth.json")
-    with open(p) as f:
+    with open(p, encoding="utf-8") as f:
         return dict(json.load(f)["channel_importance_true"])
 
 

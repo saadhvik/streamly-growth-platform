@@ -44,7 +44,7 @@ def test_conversion_rate_is_realistic(counts: dict[str, int]) -> None:
 
 
 def test_ground_truth_recorded(counts: dict[str, int]) -> None:
-    gt = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json"))
+    gt = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json", encoding="utf-8"))
     imp = gt["channel_importance_true"]
     assert set(imp) == set(CHANNELS)
     assert abs(sum(imp.values()) - 1.0) < 1e-9, "true importance must be normalized"
@@ -71,7 +71,7 @@ def test_last_touch_is_biased_vs_truth(counts: dict[str, int]) -> None:
     ).fetchall()
     con.close()
     lt_share = {ch: s for ch, s in rows}
-    gt = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json"))
+    gt = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json", encoding="utf-8"))
     true_imp = gt["channel_importance_true"]
     assert lt_share["meta"] > true_imp["meta"] + 0.05, "Meta should be over-credited"
     assert lt_share["email"] < true_imp["email"] - 0.05, "Email should be under-credited"

@@ -295,7 +295,7 @@ def _main() -> None:
         t["primary_metric"].to_numpy(), t["pre_covariate"].to_numpy(),
     )
 
-    with open(GROUND_TRUTH_DIR / "ground_truth.json") as f:
+    with open(GROUND_TRUTH_DIR / "ground_truth.json", encoding="utf-8") as f:
         true_lift = json.load(f)["experiment"]["true_treatment_lift_abs"]
 
     print(f"n = {len(c):,} control / {len(t):,} treatment\n")

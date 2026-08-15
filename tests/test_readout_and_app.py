@@ -413,7 +413,10 @@ def test_status_badge_never_relies_on_colour_alone() -> None:
 
 def test_streamlit_config_only_uses_supported_theme_keys() -> None:
     """Streamlit refuses to boot on an unrecognized config option."""
-    import tomllib
+    try:
+        import tomllib                      # stdlib from Python 3.11
+    except ModuleNotFoundError:             # 3.10 -- the declared floor
+        import tomli as tomllib             # type: ignore[no-redef]
     from pathlib import Path
 
     path = Path(__file__).resolve().parents[1] / ".streamlit" / "config.toml"
