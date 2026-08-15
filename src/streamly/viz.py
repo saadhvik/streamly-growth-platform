@@ -70,9 +70,12 @@ DARK = Palette(
 # typeface. Falls back to the system stack if the webfont has not loaded.
 FONT = '"Fira Sans", system-ui, -apple-system, "Segoe UI", sans-serif'
 
-# Layered charts are LayerChart, single-mark charts are Chart; both accept the
-# same top-level configuration, so the helpers are written against the union.
-ChartLike = alt.Chart | alt.LayerChart
+# Single-mark charts are Chart, layered ones LayerChart, and `alt.layer()` is
+# typed as possibly returning a FacetChart. All three accept the same top-level
+# configuration, so the helpers are written against the full union -- omitting
+# FacetChart type-checks locally but fails against the altair version CI
+# resolves.
+ChartLike = alt.Chart | alt.LayerChart | alt.FacetChart
 
 
 ROW_HEIGHT = 34           # px per categorical band; below ~30 the labels collide
