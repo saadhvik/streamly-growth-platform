@@ -51,7 +51,7 @@ Repeated touches on the same channel within one journey **accumulate**: a channe
 
 ### `recovery_error` (MAE)
 **Grain:** model.
-Mean absolute difference, in share points, between a model's `attribution_share` and the true channel importance in `data/ground_truth/ground_truth.json`. **This is only computable on synthetic data** — it is the whole reason the platform is synthetic-first. Reference values: last-touch **12.81pp**, Shapley **4.00pp**.
+Mean absolute difference, in share points, between a model's `attribution_share` and the true channel importance in `data/ground_truth/ground_truth.json`. **This is only computable on synthetic data** — it is the whole reason the platform is synthetic-first. Reference values: last-touch **21.75pp**, Shapley **4.00pp**. (These are asserted against freshly computed values in `tests/test_governance.py`, so they cannot quietly drift away from what the models actually produce.)
 
 ### `CAC`
 **Grain:** channel × model.

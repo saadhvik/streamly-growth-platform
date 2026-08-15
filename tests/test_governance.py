@@ -183,3 +183,43 @@ def test_readme_test_count_is_current(request: pytest.FixtureRequest) -> None:
     assert int(quoted.group(1).replace(",", "")) == collected, (
         f"README says {quoted.group(1)} tests; the suite collects {collected}"
     )
+
+
+def test_documented_recovery_values_match_the_models() -> None:
+    """The headline attribution numbers must be what the models actually produce.
+
+    This is the drift that the other doc tests would miss: the SRM alpha and the
+    lookback window are constants, but the recovery errors are *results*. They
+    change whenever the generator or a model changes -- as they did when funnel
+    structure was added to the DGP, which moved last-touch from 12.81pp to
+    21.75pp and left a stale figure in the metric definitions.
+    """
+    import os
+    import tempfile
+
+    os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_docs_"))
+
+    from streamly.attribution import validate
+    from streamly.attribution.sessionize import build_journeys
+    from streamly.datagen import generator
+
+    generator.generate()
+    scores = validate.recovery_scores(validate.attribution_matrix(build_journeys()))
+
+    readme = (REPO / "README.md").read_text(encoding="utf-8")
+    metrics = (DOCS / "metric_definitions.md").read_text(encoding="utf-8")
+
+    for model in ("last_touch", "shapley"):
+        value = f"{scores.loc[model, 'mae'] * 100:.2f}"
+        assert value in readme.replace(" pp", "pp"), (
+            f"README does not quote {model}'s actual MAE of {value}pp"
+        )
+        assert value in metrics.replace(" pp", "pp"), (
+            f"metric_definitions does not quote {model}'s actual MAE of {value}pp"
+        )
+
+    # And the headline reduction claim in the README.
+    reduction = 1.0 - scores.loc["shapley", "mae"] / scores.loc["last_touch", "mae"]
+    assert f"{reduction:.0%}" in readme, (
+        f"README does not quote the actual error reduction of {reduction:.0%}"
+    )
