@@ -70,6 +70,9 @@ jobs:
       - name: Generate warehouse
         run: python -m streamly.datagen.generator
 
+      - name: Build analytical marts
+        run: python -m streamly.marts
+
       - name: Attribution validation
         run: python -m streamly.attribution.validate
 

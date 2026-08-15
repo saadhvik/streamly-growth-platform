@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 
-from streamly import warehouse
+from streamly import marts, warehouse
 from streamly.config import (CHANNELS, DATAGEN, EXPERIMENT, GROUND_TRUTH_DIR,
                              DataGenConfig, ExperimentConfig)
 from streamly.datagen import dgp
@@ -158,6 +158,10 @@ def generate(cfg: DataGenConfig = DATAGEN, ecfg: ExperimentConfig = EXPERIMENT) 
         con.register("_tmp", df)
         con.execute(f"INSERT INTO {name} SELECT * FROM _tmp")
         con.unregister("_tmp")
+    # Marts are views, so building them here costs nothing and guarantees the
+    # analytical layer can never be stale relative to the raw tables.
+    marts.build_marts(con)
+
     counts: dict[str, int] = {}
     for name in frames:
         row = con.execute(f"SELECT COUNT(*) FROM {name}").fetchone()

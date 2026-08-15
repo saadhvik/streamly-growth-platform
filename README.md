@@ -43,8 +43,9 @@ python -m streamly.datagen.generator      # build the warehouse + ground truth
 python -m streamly.attribution.validate   # score every model against truth
 python -m streamly.attribution.roi        # ROI + the reallocation plan
 python -m streamly.experiment.readout     # generate the decision document
+python -m streamly.marts                  # rebuild the analytical views
 
-pytest -q                                 # 197 tests
+pytest -q                                 # 210 tests
 streamlit run app/streamlit_app.py        # the UI
 ```
 
@@ -67,6 +68,7 @@ Every claim above is a test that fails loudly if it stops being true.
 | Type-I error held at α under peeking | `test_srm_and_sequential.py` |
 | An invalid experiment never prints an effect size | `test_readout_and_app.py` |
 | Posterior quantities match a 4M-draw Monte Carlo | `test_bayesian.py` |
+| SQL marts and the Python engine agree on credit, exactly | `test_marts.py` |
 
 ---
 
@@ -76,6 +78,7 @@ Every claim above is a test that fails loudly if it stops being true.
 src/streamly/
 ├── config.py            # every parameter and seed, in one place
 ├── warehouse.py         # DuckDB schema DDL
+├── marts.py             # analytical views over the raw tables (ANSI SQL)
 ├── viz.py               # chart specs (validated palette, light + dark)
 │
 ├── datagen/
@@ -101,7 +104,9 @@ src/streamly/
     └── readout.py       # the gated decision rule
 ```
 
-**Why DuckDB:** zero-infra, single-file, columnar, identical on a laptop and in CI. The SQL is ANSI-portable, so lifting to BigQuery is a connection change rather than a rewrite.
+**Why DuckDB:** zero-infra, single-file, columnar, identical on a laptop and in CI. The SQL is ANSI-portable, so lifting to BigQuery is a connection change rather than a rewrite — and that claim is enforced by a test that rejects engine-specific constructs in the mart SQL.
+
+**Why views, not dbt:** the transformation layer is three SELECTs. dbt would add a dependency, a profiles file and a second execution model, and CI would have to install and run it to prove the marts still build. As views they are created by the same call that loads the data, so they cannot go stale, and the existing test run covers them. If the layer ever grows past a handful of models, dbt earns its place and these SELECTs port over unchanged.
 
 **Why both Markov and Shapley:** they fail differently. Markov captures sequence but conflates reach with incrementality; Shapley is order-agnostic and axiomatically fair but combinatorially expensive. Agreement between two independent methods is the confidence signal; divergence is a flag to investigate.
 
