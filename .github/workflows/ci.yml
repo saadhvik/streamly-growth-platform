@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: lint · types · tests (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # The floor and a current release. The floor is what `requires-python`
+      # promises; testing only the newest version lets that promise rot.
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check src tests app
+
+      - name: Type-check
+        run: mypy src/streamly
+
+      - name: Test
+        # Tests generate their own warehouse into a temp directory, so no data
+        # artifact needs to be committed or restored.
+        run: pytest tests -q
+
+  pipeline:
+    name: end-to-end pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      # Proves the artifacts in docs/ are reproducible from source rather than
+      # hand-maintained. If a model changes and the memo is not regenerated,
+      # this job is where it surfaces.
+      - name: Generate warehouse
+        run: python -m streamly.datagen.generator
+
+      - name: Attribution validation
+        run: python -m streamly.attribution.validate
+
+      - name: ROI and reallocation
+        run: python -m streamly.attribution.roi
+
+      - name: Experiment readout
+        run: python -m streamly.experiment.readout
+
+      - name: Check the readout was produced
+        run: test -s docs/experiment_readout_example.md
+
+      - name: Upload generated artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-readout
+          path: |
+            docs/experiment_readout_example.md
+            data/ground_truth/ground_truth.json
+          if-no-files-found: error

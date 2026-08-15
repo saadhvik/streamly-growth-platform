@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated warehouse -- reproducible from `python -m streamly.datagen.generator`,
+# and large. The ground-truth JSON beside it IS committed: it is tiny,
+# deterministic from a fixed seed, and it is the reference every validation
+# claim in the README is measured against.
+data/warehouse.duckdb
+data/warehouse.duckdb.wal
+/tmp/streamly_build/
+
+# Streamlit may write credentials here; the committed config.toml is safe.
+.streamlit/secrets.toml

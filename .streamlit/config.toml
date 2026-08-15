@@ -1,0 +1,26 @@
+# Streamlit theme for the Streamly Growth Platform.
+#
+# Only `primaryColor` and `font` are set here, deliberately.
+#
+# Pinning backgroundColor / secondaryBackgroundColor / textColor (or forcing
+# `base`) locks the app to one mode: Streamlit stops deriving its palette from
+# the viewer's light/dark preference, and toggling dark leaves a light page with
+# a dark chrome around it. That was a real regression here -- an instance
+# launched with `--theme.base dark` still rendered a #F8FAFC background.
+#
+# Leaving them unset lets Streamlit own the surfaces per mode, while
+# app/theme.py layers everything else on as rgba overlays that read correctly
+# against either. The trade is that the design system's specific foreground blue
+# (#1E3A8A) is not applied as body text -- a working dark mode is worth more
+# than that hue, and the primary blue still carries through headings, focus
+# rings, tab indicators, and the KPI card accent.
+
+[theme]
+primaryColor = "#1E40AF"
+font = "sans serif"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

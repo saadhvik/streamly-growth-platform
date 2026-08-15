@@ -1,0 +1,47 @@
+[project]
+name = "streamly-growth-platform"
+version = "0.1.0"
+description = "Marketing attribution + trustworthy experimentation platform for Streamly"
+requires-python = ">=3.10"
+dependencies = [
+    "duckdb>=1.0",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.10",
+    "statsmodels>=0.14",
+    "streamlit>=1.30",
+    "altair>=5.0",
+]
+
+# PyMC was in the original design for the Bayesian layer. That layer is built
+# (experiment/bayesian.py) as a conjugate Beta-Binomial solved by quadrature, so
+# PyMC is not needed: for two binomial proportions the posteriors are Beta
+# distributions known in closed form. MCMC would add a ~200MB dependency, a
+# convergence-diagnostics burden, and sampling noise that makes results
+# irreproducible run to run -- all to approximate something exact.
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+    "mypy>=1.8",
+    "pandas-stubs",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100

@@ -1,0 +1,32 @@
+{
+  "channel_importance_true": {
+    "google": 0.34,
+    "meta": 0.14,
+    "tiktok": 0.1,
+    "email": 0.28,
+    "referral": 0.14
+  },
+  "channel_exposure_share": {
+    "google": 0.22,
+    "meta": 0.4,
+    "tiktok": 0.2,
+    "email": 0.1,
+    "referral": 0.08
+  },
+  "monthly_spend": {
+    "google": 150000.0,
+    "meta": 175000.0,
+    "tiktok": 90000.0,
+    "email": 35000.0,
+    "referral": 50000.0
+  },
+  "experiment": {
+    "experiment_id": "annual_paywall_v1",
+    "control_conversion": 0.08,
+    "true_treatment_lift_abs": 0.012,
+    "true_traffic_split": 0.5,
+    "control_refund_rate": 0.06,
+    "treatment_refund_rate": 0.066
+  },
+  "seed": 42
+}
