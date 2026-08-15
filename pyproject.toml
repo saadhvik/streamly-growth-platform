@@ -47,7 +47,13 @@ pythonpath = ["src"]
 testpaths = ["tests"]
 
 [tool.mypy]
-python_version = "3.10"
+# Deliberately NOT pinned to the 3.10 floor. numpy 2.x ships stubs that use the
+# 3.12-only `type X = ...` statement, so a 3.10 target cannot even parse them
+# and mypy fails inside site-packages rather than on this repo's code.
+#
+# Compatibility with the 3.10 floor is established by *running* the full test
+# suite on 3.10 in CI, which is stronger evidence than a static check anyway.
+python_version = "3.12"
 ignore_missing_imports = true
 
 [tool.ruff]
