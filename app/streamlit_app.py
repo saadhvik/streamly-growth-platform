@@ -144,7 +144,7 @@ with attribution_tab:
 
     with left:
         st.subheader("Which model recovers the truth?")
-        st.altair_chart(viz.recovery_error_chart(scores, p), use_container_width=True)
+        st.altair_chart(viz.recovery_error_chart(scores, p), width="stretch")
         st.markdown(
             "The heuristics are biased in **opposite** directions: last-touch inflates "
             "the late-funnel channel, first-touch inflates the opener. Swapping one for "
@@ -155,26 +155,26 @@ with attribution_tab:
             st.dataframe(
                 (scores[["mae", "rmse", "max_abs_error"]] * 100).round(2)
                 .rename(columns=lambda c: f"{c} (pp)"),
-                use_container_width=True,
+                width="stretch",
             )
 
     with right:
         st.subheader("Where the credit actually goes")
-        st.altair_chart(viz.channel_share_chart(shares, p), use_container_width=True)
+        st.altair_chart(viz.channel_share_chart(shares, p), width="stretch")
         st.markdown(
             "Meta takes 68.4% of last-touch credit against 14.0% true importance. It is "
             "high-volume late-funnel retargeting, so it lands right before the decision "
             "more often than anything else — and last-touch reads position as performance."
         )
         with st.expander("Table view — attribution shares"):
-            st.dataframe((shares * 100).round(1), use_container_width=True)
+            st.dataframe((shares * 100).round(1), width="stretch")
 
     st.divider()
     st.subheader("Unit economics and the proposed move")
 
     lcol, rcol = st.columns([1, 1])
     with lcol:
-        st.altair_chart(viz.reallocation_chart(plan_table, p), use_container_width=True)
+        st.altair_chart(viz.reallocation_chart(plan_table, p), width="stretch")
         plan = meta["plan"]
         m1, m2 = st.columns(2)
         m1.metric("Dollars moved", f"${plan.dollars_moved:,.0f}/mo")
@@ -193,7 +193,7 @@ with attribution_tab:
         display["roas"] = display["roas"].round(3)
         st.dataframe(
             display[["monthly_spend", "credited_conversions", "cac", "roas"]],
-            use_container_width=True,
+            width="stretch",
         )
         st.caption(
             "CAC and ROAS under Shapley. ROAS is **first-payment** return, not "
@@ -203,7 +203,7 @@ with attribution_tab:
         with st.expander("Compare against last-touch"):
             st.dataframe(
                 meta["roi_last"][["credited_conversions", "cac", "roas"]].round(2),
-                use_container_width=True,
+                width="stretch",
             )
 
 # ---------------------------------------------------------------------------
@@ -274,7 +274,7 @@ with experiment_tab:
              "detail": f"chi2={r.srm.chi_square:.2f}, p={r.srm.p_value:.3g}"},
             {"check": "Pre-period balance", "result": "PASS" if r.balance.passed else "FAIL",
              "detail": f"std diff {r.balance.standardized_difference:+.4f}"},
-        ]).set_index("check"), use_container_width=True)
+        ]).set_index("check"), width="stretch")
 
         if r.guardrail_report is not None:
             st.markdown("**Guardrails**")
@@ -284,7 +284,7 @@ with experiment_tab:
                  "95% CI": f"[{g.harm_ci_low:+.4f}, {g.harm_ci_high:+.4f}]",
                  "margin": g.margin}
                 for g in r.guardrail_report.results
-            ]).set_index("metric"), use_container_width=True)
+            ]).set_index("metric"), width="stretch")
             st.caption(
                 "Guardrails are non-inferiority tests, not significance tests. "
                 "INCONCLUSIVE blocks exactly like FAIL — an underpowered guardrail "
@@ -303,7 +303,7 @@ with experiment_tab:
                     },
                     threshold, p,
                 ),
-                use_container_width=True,
+                width="stretch",
             )
             st.caption(
                 f"CUPED covariate correlation {r.cuped.correlation:.3f} → "
@@ -339,7 +339,7 @@ with experiment_tab:
                     r.sequential_decision.z,
                     p,
                 ),
-                use_container_width=True,
+                width="stretch",
             )
         with sq2:
             st.markdown("**Why sequential boundaries exist**")

@@ -35,6 +35,8 @@ The reference experiment runs the full gate sequence end to end and returns **SH
 
 That verdict was originally **DO NOT SHIP**, blocked by a guardrail measured on the wrong denominator: refunds among *converters* (~2,400/arm) rather than among all assigned users (30,000/arm), costing 11.6× in precision and leaving the check permanently unresolvable. The fix was to the metric design, not the margin — and `minimum_resolvable_margin()` now makes that a computation at intake instead of a discovery at readout.
 
+![Attribution tab](docs/images/app-attribution.png)
+
 ---
 
 ## Quick start
@@ -53,6 +55,12 @@ streamlit run app/streamlit_app.py        # the UI
 ```
 
 `STREAMLY_DATA_DIR` relocates the warehouse if the repo directory is read-only or has restricted deletion (which breaks DuckDB's write-ahead-log cleanup).
+
+### The experimentation tab
+
+![Experimentation tab](docs/images/app-experiment.png)
+
+The **practical significance threshold** slider is the control worth playing with: at 0.005 this experiment ships, and above roughly 1.4pp the same data returns DO NOT SHIP. That is the "significance is not importance" argument made interactive — the p-value never changes.
 
 ---
 

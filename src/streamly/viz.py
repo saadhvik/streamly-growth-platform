@@ -132,9 +132,15 @@ def recovery_error_chart(scores: pd.DataFrame, p: Palette = LIGHT) -> ChartLike:
     """
     df = scores.reset_index().rename(columns={"index": "model"})
     df = df.assign(mae_pp=df["mae"] * 100).sort_values("mae_pp")
+    # Explicit order rather than sort="x", matching the reallocation chart: the
+    # ordering is decided in pandas where it is testable, and a layered text
+    # mark cannot disagree with it. (This does not silence Vega's transient
+    # "infinite extent" console warnings -- those come from extent computations
+    # over not-yet-bound data during render and are harmless.)
+    model_order = df["model"].tolist()
 
     base = alt.Chart(df).encode(
-        y=alt.Y("model:N", sort="x", title=None,
+        y=alt.Y("model:N", sort=model_order, title=None,
                 axis=alt.Axis(labelFontSize=13, labelColor=p.text_secondary)),
         x=alt.X("mae_pp:Q", title="Mean absolute error vs ground truth (share points)",
                 scale=alt.Scale(nice=True)),
