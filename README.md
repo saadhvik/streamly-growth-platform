@@ -1,5 +1,8 @@
 # Streamly Growth Platform
 
+[![CI](https://github.com/saadhvik/streamly-growth-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/saadhvik/streamly-growth-platform/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+
 **Multi-touch attribution and trustworthy experimentation, validated against a known ground truth.**
 
 Two mandates: stop misallocating a $500K/month acquisition budget, and make experiment results mean something. Both hinge on trust, so the entire platform is built synthetic-first — the data generator writes the true channel importances and the true treatment lift to a file that no model is allowed to read until validation. That is the only way to *falsify* an attribution model. Real data cannot do it: there is nothing to check the answer against.
