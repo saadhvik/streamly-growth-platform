@@ -8,21 +8,23 @@ Two mandates: stop misallocating a $500K/month acquisition budget, and make expe
 
 ## The headline result
 
-**Last-touch misattributes 2.7× more credit to Meta than it earned. Shapley recovers the truth with 69% less error.**
+**Last-touch hands Meta 68% of the credit for 14% of the contribution. Shapley recovers the truth with 82% less error.**
 
 | Model | Recovery error (MAE vs truth) | vs last-touch |
 |---|---:|---:|
-| **Shapley** | **4.00 pp** | **−69%** |
-| Markov removal-effect | 10.91 pp | −15% |
-| First touch | 12.71 pp | −1% |
-| Position-based (40/20/40) | 12.75 pp | 0% |
-| Time decay | 12.78 pp | 0% |
-| Linear | 12.79 pp | 0% |
-| Last touch *(incumbent)* | 12.81 pp | — |
+| **Shapley** | **4.00 pp** | **−82%** |
+| Markov removal-effect | 11.37 pp | −48% |
+| Linear | 12.79 pp | −41% |
+| Time decay | 14.76 pp | −32% |
+| Position-based (40/20/40) | 14.89 pp | −32% |
+| First touch | 15.22 pp | −30% |
+| Last touch *(incumbent)* | 21.75 pp | — |
 
-The finding worth pausing on: **the five heuristic rules are indistinguishable from each other.** Switching from last-touch to time-decay or 40/20/40 — the usual "let's use a fairer model" response — moves the error by less than 0.1pp. The problem is not which rule you pick; it is that no rule observes a counterfactual.
+The finding worth pausing on: **the heuristics are biased in opposite directions, so "pick a fairer rule" is not a fix.** Last-touch gives Meta — high-volume late-funnel retargeting — 68.4% of the credit against 14.0% true. First-touch instead gives TikTok, the awareness channel, 45.9% against 10.0% true. Each rule rewards whichever channel happens to sit where that rule looks, so swapping one for another moves the over-credit to a different channel rather than reducing it. And **every** rule starves Email, which carries real lift (28.0% true) but never sits at either edge of the journey.
 
-Consequence: **$122,516/month** of the budget is pointed at the wrong channel. The proposed move is $45.6K/month for an expected +209 conversions at identical spend → [`docs/budget_reallocation_memo.md`](docs/budget_reallocation_memo.md).
+Linear scores best of the heuristics for a telling reason: it is the only one that ignores order, so it has no position to be fooled by.
+
+Consequence: **$249,086/month** of the budget is pointed at the wrong channel — last-touch's credit implies $341,952/month belongs to Meta where Shapley implies $92,866. The proposed move is $45.6K/month for an expected +209 conversions at identical spend → [`docs/budget_reallocation_memo.md`](docs/budget_reallocation_memo.md).
 
 **On the experimentation side:** peeking five times at a fixed α=0.05 produces a **14.2%** false-positive rate; the alpha-spending boundaries hold it at **5.0%**. Both measured by simulation here, not cited.
 
@@ -123,7 +125,7 @@ Stated here rather than discovered in a meeting. Each is also enforced or disclo
 
 1. **No model here measures true incrementality.** Nothing randomizes channel exposure, so a channel shown to already-high-intent users earns credit it did not cause. A geo holdout is the recommended confirmation before any budget moves — the memo recommends one rather than acting on the model alone.
 2. **Shapley's organic baseline is unobservable.** Zero-touch users never appear in a marketing log, so `v(∅)` is fixed at 0 and the efficiency axiom spreads organic conversions across channels. This compresses shares toward the mean and *flatters* weak channels — Shapley still gives Meta 18.6% against 14.0% true. The case against Meta is therefore a conservative floor, not an overstatement.
-3. **Markov only beats last-touch by 15%, and no change to the generator would fix that.** The removal effect and the ground truth measure different things: removal effect asks what fraction of conversions flow through a channel when deleting it strands the path — reach-weighted throughput — while ground truth is per-channel incrementality. A generator change cannot repair an estimand mismatch, and the obvious alternative (splicing the channel out of paths rather than routing to null) is an algebraic identity that yields exactly zero removal effect for every channel. Markov is therefore retained as a divergence alarm against Shapley, not as a decision model. What sequence structure in the DGP *would* fix is the flatness of the five heuristic rules, which currently land within 0.1pp of each other.
+3. **Markov's 48% error reduction is mostly a baseline artefact.**  Its *absolute* MAE barely moved when funnel structure was added (10.91pp → 11.37pp); the headline gap widened only because last-touch got worse. No change to the generator would fix that. The removal effect and the ground truth measure different things: removal effect asks what fraction of conversions flow through a channel when deleting it strands the path — reach-weighted throughput — while ground truth is per-channel incrementality. A generator change cannot repair an estimand mismatch, and the obvious alternative (splicing the channel out of paths rather than routing to null) is an algebraic identity that yields exactly zero removal effect for every channel. Markov is therefore retained as a divergence alarm against Shapley, not as a decision model. Adding funnel structure to the generator did fix the *other* problem it was expected to — the heuristic rules previously landed within 0.1pp of each other and now span 9pp — but it left Markov's absolute error where it was, exactly as predicted.
 4. **CUPED buys almost nothing on this dataset.** The pre-experiment covariate correlates at ρ≈0.05, giving a 0.21% variance reduction. CUPED is proven correct on simulated data at known ρ (0.7 → 49% reduction, unbiased over 300 replications), and the readout reports what it actually achieved rather than implying it helped.
 5. **SRM has a sensitivity floor.** At 30,000 users per arm it cannot detect an arm loss below 2.67%. `srm_minimum_detectable_loss()` makes this quotable.
 6. **ROAS is first-payment, not lifetime.** Levels read below 1.0 and are a payback input, not profitability. A common LTV multiple leaves the reallocation decision unchanged.

@@ -74,6 +74,29 @@ class DataGenConfig:
         }
     )
 
+    # Where each channel tends to sit in the funnel: 0.0 = first thing a user
+    # sees, 1.0 = last touch before converting. This governs journey ORDER only.
+    # It is what makes the heuristic rules disagree with each other: without it
+    # every channel is equally likely at every position, so first-touch,
+    # last-touch and time-decay all collapse onto the same exposure ranking.
+    #
+    # Meta sits late on purpose -- high-volume retargeting that lands right
+    # before the decision is exactly the profile that wins last-click credit it
+    # did not earn, which is the scenario in the brief.
+    channel_funnel_position: dict[str, float] = field(
+        default_factory=lambda: {
+            "tiktok": 0.20,    # awareness, top of funnel
+            "referral": 0.30,  # word of mouth, early
+            "google": 0.55,    # intent search, middle
+            "email": 0.65,     # nurture, mid-late
+            "meta": 0.85,      # retargeting, closes the journey
+        }
+    )
+    # Spread around each channel's funnel position. At 0 the ordering would be
+    # deterministic by channel, which is not how real journeys look; this keeps
+    # the tendency while leaving plenty of overlap.
+    funnel_position_noise: float = 0.25
+
     baseline_conversion: float = 0.045   # base prob before channel lift
     max_touches: int = 8
     revenue_monthly: float = 12.0        # $/mo plan

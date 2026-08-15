@@ -2,7 +2,7 @@
 
 **Decision: SHIP**
 
-*Generated 2026-08-10 01:40 UTC · alpha=0.05 · practical threshold +0.50%*
+*Generated 2026-08-15 21:21 UTC · alpha=0.05 · practical threshold +0.50%*
 
 ## Why
 

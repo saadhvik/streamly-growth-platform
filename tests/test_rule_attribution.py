@@ -164,11 +164,21 @@ def test_credit_table_shares_are_valid_distributions(warehouse_journeys: Journey
     np.testing.assert_allclose(table.sum(axis=0).to_numpy(), 1.0, atol=1e-9)
 
 
-def test_every_rule_over_credits_meta_versus_truth(warehouse_journeys: JourneySet) -> None:
-    """No heuristic escapes the bias -- the reason Phase 3 exists.
+def test_each_rule_is_biased_toward_the_funnel_position_it_favours(
+    warehouse_journeys: JourneySet,
+) -> None:
+    """No heuristic escapes bias -- but they fail in *different directions*.
 
-    Meta carries 14% true importance but 40% of exposure. Because none of these
-    rules observes a counterfactual, all five track exposure rather than lift.
+    Each rule rewards whichever channel sits where the rule happens to look:
+
+    * last-touch hands the bulk of the credit to meta, the late-funnel channel
+    * first-touch does the same for tiktok, the awareness channel
+    * neither channel earned it -- meta's true importance is 14%, tiktok's 10%
+
+    That divergence is the useful finding. It means "pick a fairer rule" is not
+    a fix: swapping last-touch for first-touch does not reduce the error, it
+    just moves the over-credit to a different channel. Only a method that
+    observes a counterfactual escapes it.
     """
     import json
 
@@ -176,6 +186,14 @@ def test_every_rule_over_credits_meta_versus_truth(warehouse_journeys: JourneySe
 
     truth = json.load(open(GROUND_TRUTH_DIR / "ground_truth.json"))["channel_importance_true"]
     table = rules.credit_table(warehouse_journeys, _CFG)
+
+    # Position-driven over-crediting, in opposite directions.
+    assert table.loc["meta", "last_touch"] > 3 * truth["meta"], "last-touch inflates the closer"
+    assert table.loc["tiktok", "first_touch"] > 3 * truth["tiktok"], "first-touch inflates the opener"
+    # And each rule starves the channel at the far end of the funnel from it.
+    assert table.loc["meta", "first_touch"] < truth["meta"]
+    assert table.loc["tiktok", "last_touch"] < truth["tiktok"]
+
+    # Email is the channel every rule misses: real lift, never at either edge.
     for model in _CFG.rule_models:
-        assert table.loc["meta", model] > truth["meta"] + 0.05, f"{model} should over-credit meta"
-        assert table.loc["email", model] < truth["email"] - 0.05, f"{model} should under-credit email"
+        assert table.loc["email", model] < truth["email"] - 0.05, f"{model} under-credits email"

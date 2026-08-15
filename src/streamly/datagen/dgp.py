@@ -59,11 +59,25 @@ def simulate_journeys(cfg: DataGenConfig) -> Journeys:
     # Journey length: 1..max_touches, right-skewed (most users few touches).
     lengths = rng.integers(1, cfg.max_touches + 1, size=n)
 
+    # Ordering uses its own generator so it cannot perturb the main random
+    # stream. That keeps the channel multiset, the conversion draws and every
+    # count identical to a run without funnel structure -- only the ORDER of
+    # each journey changes, which is precisely the variable under study.
+    order_rng = np.random.default_rng(cfg.seed + 99)
+    funnel = np.array([cfg.channel_funnel_position[c] for c in CHANNELS])
+
     channel_seqs: list[list[int]] = []
     conv_prob = np.empty(n)
     for i in range(n):
         L = int(lengths[i])
         seq = rng.choice(len(CHANNELS), size=L, p=exposure).tolist()
+
+        # Sort the sampled touches by funnel position plus noise. Sorting a
+        # multiset cannot change which channels appear, so exposure shares and
+        # conversion probability are untouched -- but late-funnel channels now
+        # land late, which is what lets the ordering-sensitive rules disagree.
+        scores = funnel[seq] + order_rng.normal(0.0, cfg.funnel_position_noise, size=L)
+        seq = [seq[k] for k in np.argsort(scores, kind="stable")]
         channel_seqs.append(seq)
 
         present = np.zeros(len(CHANNELS))

@@ -145,9 +145,10 @@ with attribution_tab:
         st.subheader("Which model recovers the truth?")
         st.altair_chart(viz.recovery_error_chart(scores, p), use_container_width=True)
         st.markdown(
-            "All five *heuristic* rules land within 0.1pp of each other — switching "
-            "from last-touch to time-decay or 40/20/40 changes nothing. The problem "
-            "is not the rule; it is that no rule observes a counterfactual."
+            "The heuristics are biased in **opposite** directions: last-touch inflates "
+            "the late-funnel channel, first-touch inflates the opener. Swapping one for "
+            "another moves the over-credit rather than reducing it. Linear scores best "
+            "of them only because it ignores order, so it has no position to be fooled by."
         )
         with st.expander("Table view — recovery error"):
             st.dataframe(
@@ -160,9 +161,9 @@ with attribution_tab:
         st.subheader("Where the credit actually goes")
         st.altair_chart(viz.channel_share_chart(shares, p), use_container_width=True)
         st.markdown(
-            "Meta takes 37.5% of last-touch credit against 14.0% true importance — "
-            "it has the highest exposure volume, so it is present at the end of more "
-            "journeys, and last-touch reads that as performance."
+            "Meta takes 68.4% of last-touch credit against 14.0% true importance. It is "
+            "high-volume late-funnel retargeting, so it lands right before the decision "
+            "more often than anything else — and last-touch reads position as performance."
         )
         with st.expander("Table view — attribution shares"):
             st.dataframe((shares * 100).round(1), use_container_width=True)
