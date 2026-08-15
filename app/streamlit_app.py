@@ -8,18 +8,46 @@ computed inline here, so the app cannot drift from the validated pipeline.
 """
 from __future__ import annotations
 
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
 # Allow `streamlit run app/streamlit_app.py` without PYTHONPATH gymnastics.
-_SRC = Path(__file__).resolve().parents[1] / "src"
+_REPO = Path(__file__).resolve().parents[1]
+_SRC = _REPO / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+
+def _choose_data_dir() -> None:
+    """Point the warehouse somewhere writable, before streamly.config is imported.
+
+    ``config.DATA_DIR`` is resolved at import time, so this has to run first.
+    The repo's own ``data/`` is preferred (that is where a local run expects
+    it), but a read-only checkout -- which is how some hosts mount a
+    deployment -- falls back to a temp directory. The warehouse is fully
+    reproducible from a fixed seed, so a throwaway location costs nothing but
+    the ~10s to rebuild.
+    """
+    if os.environ.get("STREAMLY_DATA_DIR"):
+        return
+    candidate = _REPO / "data"
+    try:
+        candidate.mkdir(parents=True, exist_ok=True)
+        probe = candidate / ".write_probe"
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink()
+    except OSError:
+        os.environ["STREAMLY_DATA_DIR"] = tempfile.mkdtemp(prefix="streamly_")
+
+
+_choose_data_dir()
 
 import theme  # noqa: E402
 
@@ -68,6 +96,27 @@ def palette() -> viz.Palette:
 
 
 theme.inject(dark=is_dark_mode())
+
+
+# ---------------------------------------------------------------------------
+# Bootstrap: the warehouse is generated, not committed.
+# ---------------------------------------------------------------------------
+@st.cache_resource(show_spinner="First run: generating the synthetic warehouse…")
+def ensure_warehouse() -> str:
+    """Build the warehouse if it is absent, and report where it lives.
+
+    ``data/warehouse.duckdb`` is deliberately gitignored -- it is 9MB and fully
+    reproducible from the seed in ``config.py`` -- so a fresh deployment starts
+    without it. Generating on demand takes about ten seconds and makes the app
+    self-contained: clone or deploy, run, done. ``cache_resource`` keeps it to
+    once per container rather than once per session.
+    """
+    from streamly.config import WAREHOUSE_PATH
+    from streamly.datagen import generator
+
+    if not Path(WAREHOUSE_PATH).exists():
+        generator.generate()
+    return str(WAREHOUSE_PATH)
 
 
 # ---------------------------------------------------------------------------
@@ -120,6 +169,7 @@ attribution_tab, experiment_tab, method_tab = st.tabs(
 # ---------------------------------------------------------------------------
 with attribution_tab:
     try:
+        ensure_warehouse()
         shares, scores, roi_table, plan_table, meta = load_attribution()
     except Exception as exc:                                    # noqa: BLE001
         st.error(

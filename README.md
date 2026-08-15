@@ -50,7 +50,7 @@ python -m streamly.attribution.roi        # ROI + the reallocation plan
 python -m streamly.experiment.readout     # generate the decision document
 python -m streamly.marts                  # rebuild the analytical views
 
-pytest -q                                 # 211 tests
+pytest -q                                 # 212 tests
 streamlit run app/streamlit_app.py        # the UI
 ```
 

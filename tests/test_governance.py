@@ -223,3 +223,32 @@ def test_documented_recovery_values_match_the_models() -> None:
     assert f"{reduction:.0%}" in readme, (
         f"README does not quote the actual error reduction of {reduction:.0%}"
     )
+
+
+def test_requirements_txt_matches_the_project_dependencies() -> None:
+    """A deployment installs from requirements.txt, not from pyproject.
+
+    Streamlit Community Cloud reads requirements.txt, so if the two drift the
+    deployed app gets a different dependency set than the tested one -- and the
+    failure shows up as a broken deploy, not a failing test. This makes the
+    divergence fail here instead.
+    """
+    try:
+        import tomllib
+    except ModuleNotFoundError:                 # Python 3.10
+        import tomli as tomllib                 # type: ignore[no-redef]
+
+    project = tomllib.loads((REPO / "pyproject.toml").read_text(encoding="utf-8"))
+    declared = sorted(project["project"]["dependencies"])
+
+    req_path = REPO / "requirements.txt"
+    assert req_path.exists(), "deployment needs a requirements.txt"
+    pinned = sorted(
+        line.strip() for line in req_path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    )
+    assert pinned == declared, (
+        f"requirements.txt and pyproject disagree:\n"
+        f"  only in pyproject:    {sorted(set(declared) - set(pinned))}\n"
+        f"  only in requirements: {sorted(set(pinned) - set(declared))}"
+    )
