@@ -17,11 +17,14 @@ import pytest
 # Route the warehouse to a locally-deletable dir (mirrors test_datagen).
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly.attribution import rules                                    # noqa: E402
-from streamly.attribution.sessionize import (JourneySet, build_journeys,  # noqa: E402
-                                             journeys_from_frame)
-from streamly.config import ATTRIBUTION, CHANNELS                         # noqa: E402
-from streamly.datagen import generator                                    # noqa: E402
+from streamly.attribution import rules  # noqa: E402
+from streamly.attribution.sessionize import (  # noqa: E402
+    JourneySet,
+    build_journeys,
+    journeys_from_frame,
+)
+from streamly.config import ATTRIBUTION, CHANNELS  # noqa: E402
+from streamly.datagen import generator  # noqa: E402
 
 _CFG = ATTRIBUTION
 

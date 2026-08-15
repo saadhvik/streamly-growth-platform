@@ -16,11 +16,11 @@ import pytest
 
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly import marts, warehouse                            # noqa: E402
-from streamly.attribution import rules                           # noqa: E402
-from streamly.attribution.sessionize import build_journeys       # noqa: E402
-from streamly.config import CHANNELS, DATAGEN                    # noqa: E402
-from streamly.datagen import generator                           # noqa: E402
+from streamly import marts, warehouse  # noqa: E402
+from streamly.attribution import rules  # noqa: E402
+from streamly.attribution.sessionize import build_journeys  # noqa: E402
+from streamly.config import CHANNELS, DATAGEN  # noqa: E402
+from streamly.datagen import generator  # noqa: E402
 
 
 @pytest.fixture(scope="module")

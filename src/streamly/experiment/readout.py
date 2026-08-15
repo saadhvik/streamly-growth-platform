@@ -40,8 +40,12 @@ from streamly.config import EXPERIMENT, WAREHOUSE_PATH, ExperimentConfig
 from streamly.experiment import bayesian as bayes
 from streamly.experiment import guardrails as gr
 from streamly.experiment import integrity, sequential
-from streamly.experiment.frequentist import CupedResult, TestResult, cuped_two_sample
-from streamly.experiment.frequentist import two_proportion_z_test
+from streamly.experiment.frequentist import (
+    CupedResult,
+    TestResult,
+    cuped_two_sample,
+    two_proportion_z_test,
+)
 
 
 class Decision(str, Enum):

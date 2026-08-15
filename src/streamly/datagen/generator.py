@@ -15,8 +15,14 @@ import numpy as np
 import pandas as pd
 
 from streamly import marts, warehouse
-from streamly.config import (CHANNELS, DATAGEN, EXPERIMENT, GROUND_TRUTH_DIR,
-                             DataGenConfig, ExperimentConfig)
+from streamly.config import (
+    CHANNELS,
+    DATAGEN,
+    EXPERIMENT,
+    GROUND_TRUTH_DIR,
+    DataGenConfig,
+    ExperimentConfig,
+)
 from streamly.datagen import dgp
 
 _START = datetime(2026, 5, 10)  # 90 days back from "today" (2026-08-08)

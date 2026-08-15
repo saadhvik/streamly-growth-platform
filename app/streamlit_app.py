@@ -21,13 +21,14 @@ if str(_SRC) not in sys.path:
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import theme                                                          # noqa: E402
-from streamly import viz                                              # noqa: E402
-from streamly.attribution import roi, validate                        # noqa: E402
-from streamly.attribution.sessionize import build_journeys            # noqa: E402
-from streamly.config import ATTRIBUTION, EXPERIMENT                   # noqa: E402
+import theme  # noqa: E402
+
+from streamly import viz  # noqa: E402
+from streamly.attribution import roi, validate  # noqa: E402
+from streamly.attribution.sessionize import build_journeys  # noqa: E402
+from streamly.config import ATTRIBUTION, EXPERIMENT  # noqa: E402
 from streamly.experiment import bayesian, design, readout, sequential  # noqa: E402
-from streamly.experiment.guardrails import Verdict                    # noqa: E402
+from streamly.experiment.guardrails import Verdict  # noqa: E402
 
 st.set_page_config(page_title="Streamly Growth Platform", page_icon="📊", layout="wide")
 

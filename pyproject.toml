@@ -27,8 +27,11 @@ dev = [
     "pytest>=8.0",
     # tomllib is stdlib from 3.11; the test matrix floor is 3.10.
     'tomli; python_version < "3.11"',
-    "ruff>=0.5",
-    "mypy>=1.8",
+    # Linters are pinned to a minor range, not floored. An unpinned linter makes
+    # CI non-reproducible: ruff 0.16 changed its default rule set, so CI began
+    # failing on code that had not changed and that passed locally on 0.12.
+    "ruff>=0.16,<0.17",
+    "mypy>=2.3,<3.0",
     "pandas-stubs",
 ]
 
@@ -49,3 +52,25 @@ ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
+# Selected explicitly rather than inherited. Ruff's defaults change between
+# releases -- 0.16 dropped E402 from the default set, which silently turned
+# every `# noqa: E402` in the app into an "unused directive" error. Naming the
+# rules makes the lint outcome a property of this repo, not of the version.
+# This is ruff's historical default set (what the project was in fact linted
+# against) plus import sorting. Named explicitly so the outcome is a property of
+# this repo rather than of whichever ruff version CI resolves to.
+select = [
+    "E4",    # imports: E401 multiple-imports, E402 import-not-at-top
+    "E7",    # statement-level errors: comparisons, lambdas, bare except
+    "E9",    # syntax and IO errors
+    "F",     # pyflakes: undefined names, unused imports and variables
+    "I",     # import sorting
+]
+# Deliberately NOT selected:
+#   RUF001/RUF002  flag "ambiguous" unicode, but this codebase writes real
+#                  statistical notation -- alpha, rho, +/-, and the minus sign
+#                  appear in docstrings and UI copy on purpose.
+#   E501           line length is enforced by review, not by a hard error; the
+#                  long lines here are tables and prose in docstrings.

@@ -5,13 +5,12 @@ data-generating assumptions live in exactly one place.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from pathlib import Path
-
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 import os
+from dataclasses import dataclass, field
+from pathlib import Path
 
 REPO_ROOT: Path = Path(__file__).resolve().parents[2]
 # The Cowork mount is create-only (no unlink), which breaks DuckDB's WAL

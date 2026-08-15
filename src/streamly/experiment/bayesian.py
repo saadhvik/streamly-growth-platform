@@ -50,8 +50,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy import integrate, optimize
-from scipy import stats
+from scipy import integrate, optimize, stats
 
 # Uniform prior: weakly informative, worth two observations.
 DEFAULT_PRIOR: tuple[float, float] = (1.0, 1.0)

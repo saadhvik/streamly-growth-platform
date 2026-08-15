@@ -25,10 +25,10 @@ from scipy import stats
 
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly.config import EXPERIMENT                                     # noqa: E402
-from streamly.datagen import dgp                                           # noqa: E402
+from streamly.config import EXPERIMENT  # noqa: E402
+from streamly.datagen import dgp  # noqa: E402
 from streamly.experiment import assign, guardrails, integrity, sequential  # noqa: E402
-from streamly.experiment.guardrails import Direction, Verdict              # noqa: E402
+from streamly.experiment.guardrails import Direction, Verdict  # noqa: E402
 
 LOOKS = (0.2, 0.4, 0.6, 0.8, 1.0)
 ALPHA = 0.05

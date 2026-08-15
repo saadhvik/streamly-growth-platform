@@ -26,9 +26,9 @@ from statsmodels.stats.proportion import proportions_ztest
 
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly.config import EXPERIMENT                                    # noqa: E402
-from streamly.datagen import dgp                                          # noqa: E402
-from streamly.experiment import assign, design, frequentist               # noqa: E402
+from streamly.config import EXPERIMENT  # noqa: E402
+from streamly.datagen import dgp  # noqa: E402
+from streamly.experiment import assign, design, frequentist  # noqa: E402
 
 ALPHA = 0.05
 

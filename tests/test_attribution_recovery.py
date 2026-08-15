@@ -16,14 +16,16 @@ import pytest
 
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly.attribution import roi, validate                            # noqa: E402
+from streamly.attribution import roi, validate  # noqa: E402
 from streamly.attribution.markov import markov_attribution, transition_matrix  # noqa: E402
-from streamly.attribution.sessionize import (JourneySet, build_journeys,  # noqa: E402
-                                             journeys_from_frame)
-from streamly.attribution.shapley import (efficiency_residual,            # noqa: E402
-                                          shapley_attribution)
-from streamly.config import CHANNELS                                      # noqa: E402
-from streamly.datagen import generator                                    # noqa: E402
+from streamly.attribution.sessionize import (  # noqa: E402
+    JourneySet,
+    build_journeys,
+    journeys_from_frame,
+)
+from streamly.attribution.shapley import efficiency_residual, shapley_attribution  # noqa: E402
+from streamly.config import CHANNELS  # noqa: E402
+from streamly.datagen import generator  # noqa: E402
 
 
 def _frame(rows: list[tuple[int, str, str, str | None]]) -> pd.DataFrame:

@@ -31,8 +31,8 @@ from collections.abc import Callable
 import numpy as np
 import pandas as pd
 
-from streamly.config import ATTRIBUTION, CHANNELS, AttributionConfig
 from streamly.attribution.sessionize import JourneySet, build_journeys
+from streamly.config import ATTRIBUTION, CHANNELS, AttributionConfig
 
 # A weighting rule: (path, days_before_conversion, cfg) -> weights summing to 1.
 WeightFn = Callable[[list[str], np.ndarray, AttributionConfig], np.ndarray]

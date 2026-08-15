@@ -10,9 +10,9 @@ import pytest
 # Route the warehouse to a locally-deletable dir for the test session.
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly import warehouse                       # noqa: E402
+from streamly import warehouse  # noqa: E402
 from streamly.config import CHANNELS, GROUND_TRUTH_DIR  # noqa: E402
-from streamly.datagen import generator               # noqa: E402
+from streamly.datagen import generator  # noqa: E402
 
 
 @pytest.fixture(scope="module")

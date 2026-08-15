@@ -21,15 +21,15 @@ import pytest
 
 os.environ.setdefault("STREAMLY_DATA_DIR", tempfile.mkdtemp(prefix="streamly_test_"))
 
-from streamly import viz                                            # noqa: E402
-from streamly.attribution import roi, validate                      # noqa: E402
-from streamly.attribution.sessionize import build_journeys          # noqa: E402
-from streamly.datagen import generator                              # noqa: E402
-from streamly.experiment import guardrails as gr                    # noqa: E402
-from streamly.experiment import readout, sequential                 # noqa: E402
-from streamly.experiment.frequentist import two_proportion_z_test   # noqa: E402
-from streamly.experiment.guardrails import Verdict                  # noqa: E402
-from streamly.experiment.readout import Decision, ReadoutInputs     # noqa: E402
+from streamly import viz  # noqa: E402
+from streamly.attribution import roi, validate  # noqa: E402
+from streamly.attribution.sessionize import build_journeys  # noqa: E402
+from streamly.datagen import generator  # noqa: E402
+from streamly.experiment import guardrails as gr  # noqa: E402
+from streamly.experiment import readout, sequential  # noqa: E402
+from streamly.experiment.frequentist import two_proportion_z_test  # noqa: E402
+from streamly.experiment.guardrails import Verdict  # noqa: E402
+from streamly.experiment.readout import Decision, ReadoutInputs  # noqa: E402
 
 INPUTS = ReadoutInputs(experiment_id="test", practical_threshold=0.005)
 
@@ -414,9 +414,9 @@ def test_status_badge_never_relies_on_colour_alone() -> None:
 def test_streamlit_config_only_uses_supported_theme_keys() -> None:
     """Streamlit refuses to boot on an unrecognized config option."""
     try:
-        import tomllib                      # stdlib from Python 3.11
+        import tomllib  # stdlib from Python 3.11
     except ModuleNotFoundError:             # 3.10 -- the declared floor
-        import tomli as tomllib             # type: ignore[no-redef]
+        import tomli as tomllib  # type: ignore[no-redef]
     from pathlib import Path
 
     path = Path(__file__).resolve().parents[1] / ".streamlit" / "config.toml"
