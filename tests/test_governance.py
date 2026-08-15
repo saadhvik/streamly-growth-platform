@@ -236,7 +236,7 @@ def test_requirements_txt_matches_the_project_dependencies() -> None:
     try:
         import tomllib
     except ModuleNotFoundError:                 # Python 3.10
-        import tomli as tomllib                 # type: ignore[no-redef]
+        import tomli as tomllib  # type: ignore[no-redef]
 
     project = tomllib.loads((REPO / "pyproject.toml").read_text(encoding="utf-8"))
     declared = sorted(project["project"]["dependencies"])
