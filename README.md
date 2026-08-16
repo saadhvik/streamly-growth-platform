@@ -1,7 +1,10 @@
 # Streamly Growth Platform
 
+[![Live app](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://appapppy-jpcwjhp5fxlpa7stunylpx.streamlit.app/)
 [![CI](https://github.com/saadhvik/streamly-growth-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/saadhvik/streamly-growth-platform/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+
+**▶ Try it live: [appapppy-jpcwjhp5fxlpa7stunylpx.streamlit.app](https://appapppy-jpcwjhp5fxlpa7stunylpx.streamlit.app/)**
 
 **Multi-touch attribution and trustworthy experimentation, validated against a known ground truth.**
 
@@ -35,7 +38,7 @@ The reference experiment runs the full gate sequence end to end and returns **SH
 
 That verdict was originally **DO NOT SHIP**, blocked by a guardrail measured on the wrong denominator: refunds among *converters* (~2,400/arm) rather than among all assigned users (30,000/arm), costing 11.6× in precision and leaving the check permanently unresolvable. The fix was to the metric design, not the margin — and `minimum_resolvable_margin()` now makes that a computation at intake instead of a discovery at readout.
 
-![Attribution tab](docs/images/app-attribution.png)
+[![Attribution tab](docs/images/app-attribution.png)](https://appapppy-jpcwjhp5fxlpa7stunylpx.streamlit.app/)
 
 ---
 
@@ -51,7 +54,7 @@ python -m streamly.experiment.readout     # generate the decision document
 python -m streamly.marts                  # rebuild the analytical views
 
 pytest -q                                 # 212 tests
-streamlit run app/streamlit_app.py        # the UI
+streamlit run app/streamlit_app.py        # the UI (or use the hosted app above)
 ```
 
 `STREAMLY_DATA_DIR` relocates the warehouse if the repo directory is read-only or has restricted deletion (which breaks DuckDB's write-ahead-log cleanup).
