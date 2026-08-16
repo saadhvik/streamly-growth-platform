@@ -32,6 +32,10 @@ dev = [
     # failing on code that had not changed and that passed locally on 0.12.
     "ruff>=0.16,<0.17",
     "mypy>=2.3,<3.0",
+    # Required by the CI-workflow validation test. Without it that test calls
+    # importorskip and silently no-ops -- which it did, in CI itself, because
+    # only the local Anaconda environment happened to ship PyYAML.
+    "pyyaml",
     "pandas-stubs",
 ]
 
